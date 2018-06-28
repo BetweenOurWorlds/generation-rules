@@ -113,7 +113,7 @@ mappings:
     source: season_source
     s: https://betweenourworlds.org/season/$(anime.slug)-$(seasonNumber)
     po:
-      - [a, [schema:Episode, schema:CreativeWork, schema:Thing]]
+      - [a, [schema:Season, schema:CreativeWork, schema:Thing]]
       - [schema:seasonNumber, $(seasonNumber), schema:Integer]
       - p: schema:about
         o:
