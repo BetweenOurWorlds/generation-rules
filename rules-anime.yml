@@ -22,6 +22,10 @@ sources:
     access: anime-seasons-0.json
     referenceFormulation: jsonpath
     iterator: $.[*]
+  character_source:
+    access: anime-characters-0.json
+    referenceFormulation: jsonpath
+    iterator: $.[*]
 
 mappings:
   anime:
@@ -55,6 +59,14 @@ mappings:
             parameters:
               - [str1, $(attributes.slug)]
               - [str2, $(attributes.slug)]
+      - p: bow:character
+        o:
+          mapping: character
+          condition:
+            function: equal
+            parameters:
+              - [str1, $(id)]
+              - [str2, $(anime_id)]
   trailer:
     source: anime_source
     s: https://betweenourworlds.org/trailer/$(attributes.slug)
@@ -123,3 +135,15 @@ mappings:
               parameters:
                 - [str1, $(anime.id)]
                 - [str2, $(id)]
+  character:
+    source: character_source
+    s: https://betweenourworlds.org/character/$(attributes.slug)
+    po:
+      - [a, [bow:Character, schema:Thing]]
+      - [[rdfs:label, schema:name, dbo:title], $(attributes.name)]
+      - [[rdfs:label, schema:name, dbo:title], $(attributes.names.en), en~lang]
+      - [[rdfs:label, schema:name, dbo:title], $(attributes.names.ja_jp), ja~lang]
+      - [schema:mainEntityOfPage, https://myanimelist.net/character/$(attributes.malId), schema:URL]
+      - [[schema:description, rdfs:comment], $(attributes.description)]
+      - [schema:image, $(attributes.image.original), schema:URL]
+      - [schema:alternateName, $(attributes.otherNames)]
