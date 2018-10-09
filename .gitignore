@@ -3,3 +3,5 @@
 *.ttl
 *.nt
 *.output
+test*
+*.jar
