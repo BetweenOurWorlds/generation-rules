@@ -2,6 +2,7 @@ prefixes:
   afn: https://betweenourworlds.org/function/
   bow: https://betweenourworlds.org/ontology/
   dbo: http://dbpedia.org/ontology/
+  idlab-fn: http://example.com/idlab/function/
 
 base: https://betweenourworlds.org/generation-rule/
 
@@ -48,9 +49,9 @@ mappings:
       - [schema:mainEntityOfPage, $(streams), schema:URL]
       - p: a
         o:
-          function: afn:getClass
+          function: afn:getClasses
           parameters:
-            - [afn:value, $(attributes.subtype)]
+            - [idlab-fn:str, $(attributes.subtype)]
       - p: schema:trailer
         o:
           mapping: trailer
@@ -83,7 +84,7 @@ mappings:
         o:
           function: afn:getStreamAgent
           parameters:
-            - [afn:value, $(service)]
+            - [idlab-fn:str, $(service)]
           type: iri
       - p: bow:object
         o:
