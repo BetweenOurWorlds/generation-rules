@@ -3,6 +3,7 @@ prefixes:
   bow: https://betweenourworlds.org/ontology/
   dbo: http://dbpedia.org/ontology/
   idlab-fn: http://example.com/idlab/function/
+  dcterms: http://purl.org/dc/terms/
 
 base: https://betweenourworlds.org/generation-rule/
 
@@ -12,19 +13,15 @@ sources:
     referenceFormulation: jsonpath
     iterator: $.data[*]
   stream_source:
-    access: anime-streams-0.json
+    access: streams-0.json
     referenceFormulation: jsonpath
     iterator: $.[*]
   episode_source:
-    access: anime-episodes-0.json
+    access: episodes-0.json
     referenceFormulation: jsonpath
     iterator: $.[*]
   season_source:
-    access: anime-seasons-0.json
-    referenceFormulation: jsonpath
-    iterator: $.[*]
-  character_source:
-    access: anime-characters-0.json
+    access: seasons-0.json
     referenceFormulation: jsonpath
     iterator: $.[*]
 
@@ -34,16 +31,16 @@ mappings:
     s: https://betweenourworlds.org/anime/$(attributes.slug)
     po:
       - [a, [dbo:Work, dbo:Cartoon, dbo:Anime, schema:Thing, schema:CreativeWork]]
-      - [[schema:name, rdfs:label, dbo:title], $(attributes.canonicalTitle)]
-      - [[schema:name, rdfs:label, dbo:title], $(attributes.titles.en), en~lang]
-      - [[schema:name, rdfs:label, dbo:title], $(attributes.titles.en_jp), ja~lang]
-      - [[schema:name, rdfs:label, dbo:title], $(attributes.titles.ja_jp), ja~lang]
+      - [[schema:name, rdfs:label, dbo:title, dcterms:title], $(attributes.canonicalTitle)]
+      - [[schema:name, rdfs:label, dbo:title, dcterms:title], $(attributes.titles.en), en~lang]
+      - [[schema:name, rdfs:label, dbo:title, dcterms:title], $(attributes.titles.en_jp), ja~lang]
+      - [[schema:name, rdfs:label, dbo:title, dcterms:title], $(attributes.titles.ja_jp), ja~lang]
       - [[schema:numberOfEpisodes, dbo:numberOfEpisodes], $(attributes.episodeCount)]
       - [schema:contentRating, [$(attributes.ageRating), $(attributes.ageRatingGuide)]]
       - [schema:image, $(attributes.coverImage.original), schema:URL]
       - [schema:endDate, $(attributes.endDate), schema:Date]
       - [schema:startDate, $(attributes.startDate), schema:Date]
-      - [[rdfs:comment, schema:description], $(attributes.synopsis)]
+      - [[rdfs:comment, schema:description, dcterms:description], $(attributes.synopsis)]
       - [schema:mainEntityOfPage, https://kitsu.io/anime/$(attributes.slug), schema:URL]
       - [schema:mainEntityOfPage, $(otherWebsites), schema:URL]
       - [schema:mainEntityOfPage, $(streams), schema:URL]
@@ -60,14 +57,7 @@ mappings:
             parameters:
               - [str1, $(attributes.slug)]
               - [str2, $(attributes.slug)]
-      - p: bow:character
-        o:
-          mapping: character
-          condition:
-            function: equal
-            parameters:
-              - [str1, $(id)]
-              - [str2, $(anime_id)]
+      - [bow:character, "https://betweenourworlds.org/character/$(characters[*])~iri"]
   trailer:
     source: anime_source
     s: https://betweenourworlds.org/trailer/$(attributes.slug)
@@ -99,9 +89,9 @@ mappings:
     s: https://betweenourworlds.org/episode/$(anime_slug)-$(attributes.number)
     po:
       - [a, [schema:Episode, schema:CreativeWork, schema:Thing]]
-      - [[schema:name, rdfs:label, dbo:title], $(attributes.canonicalTitle)]
+      - [[schema:name, rdfs:label, dbo:title, dcterms:title], $(attributes.canonicalTitle)]
       - [schema:episodeNumber, $(attributes.relativeNumber), schema:Integer]
-      - [[rdfs:comment, schema:description], $(attributes.synopsis)]
+      - [[rdfs:comment, schema:description, dcterms:description], $(attributes.synopsis)]
       - p: schema:partOfSeason
         o:
           mapping: season
@@ -136,15 +126,3 @@ mappings:
               parameters:
                 - [str1, $(anime.id)]
                 - [str2, $(id)]
-  character:
-    source: character_source
-    s: https://betweenourworlds.org/character/$(attributes.slug)
-    po:
-      - [a, [bow:Character, schema:Thing]]
-      - [[rdfs:label, schema:name, dbo:title], $(attributes.name)]
-      - [[rdfs:label, schema:name, dbo:title], $(attributes.names.en), en~lang]
-      - [[rdfs:label, schema:name, dbo:title], $(attributes.names.ja_jp), ja~lang]
-      - [schema:mainEntityOfPage, https://myanimelist.net/character/$(attributes.malId), schema:URL]
-      - [[schema:description, rdfs:comment], $(attributes.description)]
-      - [schema:image, $(attributes.image.original), schema:URL]
-      - [schema:alternateName, $(attributes.otherNames)]
